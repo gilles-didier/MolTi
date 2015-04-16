@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>about.png</file>
+        <file>help.png</file>
+        <file>HelpMolTi.html</file>
+        <file>molti.png</file>
+        <file>quit.png</file>
+        <file>save.png</file>
+        <file>molti60.png</file>
+    </qresource>
+</RCC>

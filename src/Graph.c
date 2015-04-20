@@ -503,11 +503,14 @@ TypeMultiGraph *cpyMultiGraph(TypeMultiGraph *h) {
 	g = (TypeMultiGraph*) malloc(sizeof(TypeMultiGraph));
 	g->sizeGraph = h->sizeGraph;
 	g->sizeTable = h->sizeTable;
-	g->name = (char**) malloc(g->sizeGraph*sizeof(char*));
-	for(n=0; n<g->sizeGraph; n++) {
-		g->name[n] = (char*) malloc((strlen(h->name[n])+1)*sizeof(char));
-		strcpy(g->name[n], h->name[n]);
-	}
+	if(h->name != NULL) {
+		g->name = (char**) malloc(g->sizeGraph*sizeof(char*));
+		for(n=0; n<g->sizeGraph; n++) {
+			g->name[n] = (char*) malloc((strlen(h->name[n])+1)*sizeof(char));
+			strcpy(g->name[n], h->name[n]);
+		}
+	} else
+		g->name = NULL;
 	g->edge = (TypeEdgeG***) malloc(g->sizeTable*sizeof(TypeEdgeG**));
 	g->present = (int**) malloc(g->sizeTable*sizeof(int*));
 	for(t=0; t<g->sizeTable; t++) {
@@ -527,37 +530,64 @@ TypeMultiGraph *cpyMultiGraph(TypeMultiGraph *h) {
 void freeMultiGraph(TypeMultiGraph *g) {
 	TypeSizeG i;
 	int t;
-	for(i=0; i<g->sizeGraph; i++)
-		free((void*)g->name[i]);
-	free((void*)g->name);
-	for(t=0; t<g->sizeTable; t++) {
-		free((void*)g->present[t]);
+	if(g==NULL)
+		return;
+	if(g->name != NULL) {
 		for(i=0; i<g->sizeGraph; i++)
-			free((void*)g->edge[t][i]);
-		free((void*)g->edge[t]);
+			if(g->name[i] != NULL)
+				free((void*)g->name[i]);
+		free((void*)g->name);
 	}
-	free((void*)g->present);
-	free((void*)g->edge);
+	if(g->present != NULL) {
+		for(t=0; t<g->sizeTable; t++)
+			if(g->present[t] != NULL)
+				free((void*)g->present[t]);
+		free((void*)g->present);
+	}
+	if(g->edge != NULL) {
+		for(t=0; t<g->sizeTable; t++) {
+			if(g->edge[t] != NULL) {
+				for(i=0; i<g->sizeGraph; i++)
+					if(g->edge[t][i] != NULL)
+						free((void*)g->edge[t][i]);
+				free((void*)g->edge[t]);
+			}
+		}
+		free((void*)g->edge);
+	}
 	free((void*) g);
 }
 
 /*free  graph in standard format*/	
 void freeGraph(TypeGraph *g) {
 	TypeSizeG i;
-	for(i=0; i<g->sizeGraph; i++)
-		free((void*)g->name[i]);
-	free((void*)g->name);
-	for(i=0; i<g->sizeGraph; i++)
-		free((void*)g->edge[i]);
-	free((void*)g->edge);
+	if(g==NULL)
+		return;
+	if(g->name != NULL) {
+		for(i=0; i<g->sizeGraph; i++)
+			if(g->name[i] != NULL)
+				free((void*)g->name[i]);
+		free((void*)g->name);
+	}
+	if(g->edge != NULL) {
+		for(i=0; i<g->sizeGraph; i++)
+			if(g->edge[i] != NULL)
+				free((void*)g->edge[i]);
+		free((void*)g->edge);
+	}
+	free((void*)g);
 }
+
 /*print graph in standard format*/	
 void fprintGraph(FILE *f, TypeGraph *g) {
 	TypeSizeG n, m;
 	for(n=0; n<g->sizeGraph; n++)
 		for(m=0; m<n; m++) {
 			if(g->edge[n][m])
-				fprintf(f, "%s\t%s\n", g->name[n], g->name[m]);
+				if(g->name != NULL)
+					fprintf(f, "%s\t%s\n", g->name[n], g->name[m]);
+				else
+					fprintf(f, "%d\t%d\n", n, m);
 		}
 }
 

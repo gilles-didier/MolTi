@@ -310,6 +310,7 @@ TypeDictNode *newDictNode(char c){
 	n->child = NULL;
 	n->sibling = NULL;
 	n->index = -1;
+	return n;
 }
 
 int getIndex(char *s, TypeDictNode *cur) {
@@ -382,6 +383,8 @@ void exitProg(TypeExit code, char *message) {
 		case ErrorArgs:
 			printf("No alphabet selected...\n");
 			break;
+		case ExitOk:
+		default:
 	}
 	if(message != NULL)
 		printf("%s\n", message);
@@ -654,3 +657,4 @@ size_t *qsortIndirect(void *base, size_t nitems, size_t size, int (*compar)(cons
 	monfree((void*)p);
 	return index;
 }
+

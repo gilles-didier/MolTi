@@ -19,11 +19,11 @@
 
 
 
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-#include <nlopt.h>
 #include <time.h>
 
 #include "Utils.h"
@@ -58,11 +58,8 @@
 #define INFTY 1E99
 #define TRIAL 10
 #define MAX_ITER 1000
-#define TOLERANCE_CONSTRAINT 0.001
-#define TOLERANCE_OPTIM 0.001
-#define NLOPT_ALGO NLOPT_LN_BOBYQA
-//#define NLOPT_ALGO NLOPT_LN_COBYLA
-//#define NLOPT_ALGO NLOPT_GN_ISRES
+
+
 
 //./test -i 1000 -t 10 -c 20 -p 0.2 0.1 -p 0.9 0.8 -p 0.6 0.4 -g 1000
 //./tx -i 100 -t 10 -c 20 -p 0.2 0.1 -p 0.9 0.8 -p 0.5 0.4 -g 400
@@ -70,8 +67,6 @@
 //./tx -i 1 -t 10 -c 2 -p 0.2 0.1 -p 0.9 0.8 -p 0.5 0.4 -g 8
 
 static int trial=TRIAL, maxIter=MAX_ITER;
-static double tolConstraint = TOLERANCE_CONSTRAINT, tolOptim = TOLERANCE_OPTIM;
-static nlopt_algorithm algorithm = NLOPT_ALGO;
 
 #define HELPMESSAGE "\nusage: draw <input file> [<output file>]\n\nThe input file has to be in Diagonal format, \nreturns a figure of the N-map in <input file> in eps format.\n"
 

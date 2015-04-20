@@ -385,6 +385,7 @@ void exitProg(TypeExit code, char *message) {
 			break;
 		case ExitOk:
 		default:
+			break;
 	}
 	if(message != NULL)
 		printf("%s\n", message);

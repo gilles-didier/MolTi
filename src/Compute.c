@@ -276,7 +276,6 @@ printf("Computing %s\n", output);
 	}
 	for(t=0; t<sizeTable; t++) {
 		freeGraph(tableGraph[t]);
-		free((void*) tableGraph[t]);
 		free((void*) name[t]);
 		free((void*) inputNameTable[t]);
 	}

@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 			option['o'] = 0;
 			if((i+1)<argc && sscanf(argv[i+1], "%s", ontoFileName) == 1) {
 				i++;
-				if(fi = fopen(ontoFileName, "r")) {
+				if((fi = fopen(ontoFileName, "r"))) {
 					info = readOntologyInfo(fi);
 					fclose(fi);
 				} else
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 	if(i>=argc)
 		exitProg(ErrorArgument, "wrong or absent file name");
 printf("\n\nReading Annotation file\n");
-	if(fi = fopen(argv[i], "r")) {
+	if((fi = fopen(argv[i], "r"))) {
 		an = readAnnotation(fi);
 		fclose(fi);
 	} else
@@ -118,7 +118,7 @@ printf("\n\nReading Annotation file\n");
 	i++;
 printf("done\n");
 printf("\n\nReading Partition file\n");
-	if(fi = fopen(argv[i], "r")) {
+	if((fi = fopen(argv[i], "r"))) {
 		switch(format) {
 			case 'c':
 				part = readPartition(fi, &name);
@@ -134,7 +134,6 @@ printf("\n\nReading Partition file\n");
 printf("done\n");
 printf("\n\nIntegrating data\n");
 	sap = newStatAnnotationPartition(an, &part, name);
-	fprintStatAnnotationPartitionInfo(stdout, sap);
 printf("done\n");
 printf("\n\nComputing Correction\n");
 	switch(type) {
@@ -152,7 +151,7 @@ printf("done\n");
 	} else {
 		out = "out.csv";
 	}
-	if(fo = fopen(out, "w")) {
+	if((fo = fopen(out, "w"))) {
 		fprintSignificantTableEmpiricalAnais(fo, sig, sap->sizeG, sap->nameA, info);
 //		fprintSignificantTableEmpirical(fo, sig, sap->nameA);
 //		fprintAnnotation(fo, an);
@@ -163,3 +162,4 @@ printf("done\n");
 	freeOntologyInfo(info);
 	return 0;
 }
+

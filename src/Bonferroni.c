@@ -36,7 +36,7 @@
 
 #define STRING_SIZE 300
 
-#define HELPMESSAGE "\nusage: bonf [options] <annotation file> <partition file> [<output file>]\n\noptions are\n\t-o <ontology file>\t\tload ontology descriptors\n\t-t <real number>\tset the threshold\n\t-f c or f\t\t\tindicate the partition format\n\t-h\t\t\tdisplay help\n"
+#define HELPMESSAGE "\nusage: bonf [options] <annotation file> <partition file> [<output file>]\n\noptions are\n\t-o <ontology file>\t\tload ontology descriptors\n\t-t <real number>\tset the threshold (0.001 as default)\n\t-f c or f\t\t\tindicate the partition format\n\t-h\t\t\tdisplay help\n"
 
 
 int main(int argc, char **argv) {		

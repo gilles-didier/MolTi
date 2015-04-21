@@ -49,7 +49,7 @@
 #define NITER 4
 #define NTRIALS 2
 
-#define HELPMESSAGE "\nusage: multinet [options] <input file1> <input file2> ...\n\noptions are\n\t-o <file name>\t\tset the output file name prefix\n\t-p <real number>\tset the Newman modularity parameter\n\t-s\t\t\tcompute partition on each graph individually and on the sum graph\n\t-h\t\t\tdisplay help\n"
+#define HELPMESSAGE "\nusage: multinet [options] <input file1> <input file2> ...\n\noptions are\n\t-o <file name>\t\tset the output file name prefix\n\t-p <real number>\tset the Newman modularity parameter (1 as default)\n\t-s\t\t\tcompute partition on each graph individually and on the sum graph\n\t-h\t\t\tdisplay help\n"
 
 void fillMultiOne(TypeGraph *g, TypeMultiGraph *m) {
 	m->name = g->name;

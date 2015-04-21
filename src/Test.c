@@ -68,7 +68,7 @@
 
 static int trial=TRIAL, maxIter=MAX_ITER;
 
-#define HELPMESSAGE "\nusage: draw <input file> [<output file>]\n\nThe input file has to be in Diagonal format, \nreturns a figure of the N-map in <input file> in eps format.\n"
+#define HELPMESSAGE "\ntest first simulates random multiplex networks with g vertices and from 1 to t layers with a balanced community structure of c communities (i simulations for each number of layers). It next detects communities by using aggregation and multiplex-modularity approaches and computes the adjusted Rand index (and the normalized mutual information) between the reference community structure and the detected one. It writes a '.csv' file containing the means and the standard deviations of the adjusted Rand indexes for each method, with the following format:\n Column 1: number of layers\n Column 2 and 3: mean and standard deviation obtained with the multiplex-modularity approach\n Column 4 and 5: mean and standard deviation obtained with the sum-aggregation approach\n Column 6 and 7: mean and standard deviation obtained with the intersection\n Column 6 and 7: mean and standard deviation obtained with the union aggregation approach. \n\nusage: test <options> <output file name>\n\nOptions:\n	-g <number>	set the number of vertices of the random graphs (50 as default)\n	-t <number>	set the max number of random graphs (10 as default)\n	-c <number>	set the number of classes (3 as default)\n	-i <number>	set the number of iterations (4 as default)\n	-p <prob intra> <prob inter>	add a new pair of probas\n	-a  <number>	set the modularity parameter (1 as default)\n	-h	display help message\n"
 
 
 

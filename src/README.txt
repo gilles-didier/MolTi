@@ -8,7 +8,7 @@ usage: molti-console [options] <input file1> <input file2> ...
 
 options are
 	-o <file name>      set the output file name prefix
-	-p <real number>    set the Newman modularity resolution parameter
+	-p <real number>    set the Newman modularity resolution parameter (set to 1 as default)
 	-s                  compute partition on each graph individually and on the sum graph
 	-h                  display help
 
@@ -21,7 +21,7 @@ usage: bonf [options] <annotation file> <partition file> [<output file>]
 
 options are
 	-o <ontology descriptions file>     load ontology terms descriptions
-	-t <real number>                    set the threshold
+	-t <real number>                    set the threshold (set to 0.001 as default)
 	-f c or f                           indicate the partition format
 	-h                                  display help
 
@@ -37,12 +37,12 @@ options are
 usage: test <options> <output file name>
 
 Options:
-	-g <number>	set the number of vertices of the random graphs
-	-t <number>	set the max number of random graphs
-	-c <number>	set the number of classes
-	-i <number>	set the number of iterations
+	-g <number>	set the number of vertices of the random graphs (50 as default)
+	-t <number>	set the max number of random graphs (10 as default)
+	-c <number>	set the number of classes (3 as default)
+	-i <number>	set the number of iterations (4 as default)
 	-p <prob intra> <prob inter>	add a new pair of probas
-	-a  <number>	set the modularity parameter
+	-a  <number>	set the modularity parameter (1 as default)
 	-h	display help message
 
 

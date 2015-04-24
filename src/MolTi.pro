@@ -12,7 +12,8 @@ QT       += webkitwidgets
 TARGET = MolTi
 TEMPLATE = app
 ICON = MolTi.icns
-
+INCLUDEPATH += /usr/local/include
+LIBS += -L /usr/local/lib
 
 SOURCES += main.cpp\
 		moltiwindow.cpp \

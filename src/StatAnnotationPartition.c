@@ -44,7 +44,7 @@ TypeStatAnnotationPartition *newStatAnnotationPartition(TypeAnnotation *annot, T
     dict = getDictFromTable(annot->nameG, annot->sizeG);
 
     indexA = (int*) malloc(annot->sizeG*sizeof(int));
-    indexG = (int*) malloc(annot->sizeG*sizeof(int));
+    indexG = (int*) malloc(part->sizeItem*sizeof(int));
     index = (int*) malloc(UTILS_MIN(annot->sizeG, part->sizeItem)*sizeof(int));
     size = 0;
     for(i=0; i<part->sizeItem; i++)

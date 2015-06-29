@@ -521,7 +521,7 @@ void fprintSignificantTableEmpiricalAnais(FILE *f, TypeSignificantTable sig, int
         dict = NULL;
     last = sig.table[0].atom;
     g = 1;
-    fprintf(f, "Community %d (size %d)\n", sig.table[0].atom+1, sig.table[0].effC);
+    fprintf(f, "Community %d (annotated elements %d)\n", sig.table[0].atom+1, sig.table[0].effC);
     for(i=0; i<sig.size; i++) {
         int n;
         if(sig.table[i].atom != last) {

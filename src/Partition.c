@@ -655,3 +655,5 @@ void keepIntersection(TypePartition *part1, char **name1, TypePartition *part2, 
     free((void*)indexI2);
     free((void*)indexC2);
 }
+
+

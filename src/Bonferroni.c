@@ -40,7 +40,7 @@
 
 
 int main(int argc, char **argv) {		
-	char inputFileName[STRING_SIZE], ontoFileName[STRING_SIZE], outputFileName[STRING_SIZE], option[256], *out, format='s', **name, type='b';
+	char inputFileName[STRING_SIZE], ontoFileName[STRING_SIZE], outputFileName[STRING_SIZE], outputFileNameBis[STRING_SIZE], option[256], *out, format='s', **name, type='b';
 	FILE *fi, *fo;
 	int i, j, t, s, niter = 100;
 	TypeAnnotation *an;
@@ -118,6 +118,7 @@ printf("\n\nReading Annotation file\n");
 	i++;
 printf("done\n");
 printf("\n\nReading Partition file\n");
+	strcpy(outputFileName, argv[i]);
 	if((fi = fopen(argv[i], "r"))) {
 		switch(format) {
 			case 'c':
@@ -149,9 +150,16 @@ printf("done\n");
 	if(i<argc) {
 		out = argv[i];
 	} else {
-		out = "out.csv";
+		if((out = strrchr(outputFileName, '.')) != NULL)
+			out[0] = '\0';
+		if((out=strrchr(outputFileName, '/')) == NULL)
+			out = outputFileName;
+		else
+			out++;
+		sprintf(outputFileNameBis, "%s.annot", out);
+			
 	}
-	if((fo = fopen(out, "w"))) {
+	if((fo = fopen(outputFileNameBis, "w"))) {
 		fprintSignificantTableEmpiricalAnais(fo, sig, sap->sizeG, sap->nameA, info);
 //		fprintSignificantTableEmpirical(fo, sig, sap->nameA);
 //		fprintAnnotation(fo, an);

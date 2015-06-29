@@ -117,6 +117,9 @@ void initLouvain(TypeMultiGraph *graph, void *info, TypeCommunityState **stateP,
 int iterateGlobal(TypeLouvainGlobal *global);
 TypePartition getPartition(TypeMultiGraph *graph, TypePartitionMethod type, void *info);
 
+
+TypePartition getPartitionConsensus(TypeMultiGraph *graph, TypePartitionMethod type, void *info);
+
 #ifdef __cplusplus
 }
 #endif

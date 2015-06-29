@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 	TypeMultiERMG *model, *model2, **modelA;
 	TypeMultiGraph *graph;
 	TypePartition part1, part2, part;
-	double **tau, ***tauA, like, *alpha, scale = 1., pin[NP_MAX], pex[NP_MAX], alp = 1., *pi, *pe, p, thre = 0.;
+	double **tau, ***tauA, like, *alpha, scale = 1., pin[NP_MAX], pex[NP_MAX], alp = 1., *pi, *pe, p, thre = 0., pres = 1.;
 	TypePartitionMethod type = LouvainType;
 	
 //	srand(time(NULL));
@@ -148,6 +148,13 @@ int main(int argc, char **argv) {
 			else
 				exitProg(ErrorArgument, "a real number is required after option -a");
 		}
+		if(option['x']) {
+			option['x'] = 0;
+			if((i+1)<argc && sscanf(argv[i+1], "%lf", &pres) == 1)
+				i++;
+			else
+				exitProg(ErrorArgument, "a real number is required after option -x");
+		}
 		if(option['h']) {
 			option['h'] = 0;
 			printf("%s\n", HELPMESSAGE);
@@ -196,7 +203,8 @@ int main(int argc, char **argv) {
 					pe[t] = model->pi[t][0][1];
 					pi[t] = model->pi[t][0][0];
 				}
-				graph = getRandomMultiGraph(model, size, &part1);
+//				graph = getRandomMultiGraph(model, size, &part1);
+				graph = getRandomMultiGraphMissing(model, size, &part1, pres);
 		 		freeMultiERMG(model);
 		 		
 				part2 = getPartition(graph, LouvainType, &alp);

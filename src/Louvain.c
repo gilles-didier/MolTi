@@ -34,7 +34,63 @@
 static int checkCommunityState(TypeCommunityState *state);
 static int checkDouble(TypeCommunityState *state);
 
+/****************************************************************************/
+/* Partitions to Graph */
+/****************************************************************************/
 
+
+TypePartition getPartitionConsensus(TypeMultiGraph *graph, TypePartitionMethod type, void *info) {
+	TypeMultiGraph *gtmp, *gpart;
+	int t, i, j;
+	TypePartition *tablePart = (TypePartition*) malloc(graph->sizeTable*sizeof(TypePartition)), res;
+	gtmp = (TypeMultiGraph*) malloc(sizeof(TypeMultiGraph));
+	gtmp->sizeTable = 1;
+	gtmp->edge = (TypeEdgeG***) malloc(sizeof(TypeEdgeG**));
+	gtmp->present = (int**) malloc(sizeof(int*));
+	gtmp->sizeGraph = graph->sizeGraph;
+	gtmp->name = graph->name;
+	for(t=0; t<graph->sizeTable; t++) {
+		gtmp->edge[0] = graph->edge[t];
+		gtmp->present[0] = graph->present[t];
+		tablePart[t] = getPartition(gtmp, type, info);
+	}
+	gtmp->present[0] = (int*) malloc(graph->sizeGraph*sizeof(int));
+	for(i=0; i<graph->sizeGraph; i++)
+		gtmp->present[0][i] = 1;
+	gtmp->edge[0] = (TypeEdgeG**) malloc(graph->sizeGraph*sizeof(TypeEdgeG*));
+	for(i=0; i<graph->sizeGraph; i++) {
+		gtmp->edge[0][i] = (TypeEdgeG*) malloc(graph->sizeGraph*sizeof(TypeEdgeG*));
+		gtmp->edge[0][i][i] = 0.;
+		for(j=0; j<i; j++) {
+			double sum = 0.;
+			gtmp->edge[0][i][j] = 0.;
+			for(t=0; t<graph->sizeTable; t++) {
+				if(graph->present[t][i] && graph->present[t][j]) {
+					if(tablePart[t].atom[i] == tablePart[t].atom[j])
+						gtmp->edge[0][i][j]++;
+					sum++;
+				}
+			}
+			if(sum>0.)
+				gtmp->edge[0][i][j] /= sum;
+//fprintf(stderr, "e(%d, %d) = %.2lf (%.2lf)\n", i, j, gtmp->edge[0][i][j], graph->edge[0][i][j]);
+			gtmp->edge[0][j][i] = gtmp->edge[0][i][j];
+		}
+	}
+	res = getPartition(gtmp, type, info);
+	for(i=0; i<graph->sizeGraph; i++)
+		free((void*)gtmp->edge[0][i]);
+	free((void*)gtmp->edge[0]);
+	free((void*)gtmp->edge);
+	free((void*)gtmp->present[0]);
+	free((void*)gtmp->present);
+	free((void*)gtmp);
+	for(t=0; t<graph->sizeTable; t++)
+		free((void*)tablePart[t].atom);
+	free((void*)tablePart);
+	return res;
+}
+	
 /****************************************************************************/
 /* General functions on state*/
 /****************************************************************************/

@@ -14,5 +14,8 @@ molti-console: Compute.c
 test: Test.c
 	$(CC) Louvain.c Partition.c Graph.c  Utils.c ERMG.c RandomGraph.c Test.c -o $@ -L/usr/local/lib -L/usr/lib/ -lm -g
 
+testth: TestThread.c
+	$(CC)  -D_REENTRANT Louvain.c Partition.c Graph.c  Utils.c ERMG.c RandomGraph.c TestThread.c -o $@  -L/usr/local/lib -L/usr/lib/ -lm -lpthread -O3
+
 bonf: Bonferroni.c
 	$(CC) Partition.c StatAnnotationPartition.c Annotation.c  Utils.c Bonferroni.c -o $@ -L/usr/local/lib -L/usr/lib/ -I/usr/local/include -lm -lgsl -lgslcblas -g 

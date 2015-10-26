@@ -624,6 +624,23 @@ void fprintMultiGraph(FILE *f, int i, TypeMultiGraph *g) {
 	}
 }
 
+/*print ith graph in Octave matrix format*/	
+void fprintMultiGraphOctaveMatrix(FILE *f, int i, TypeMultiGraph *g, char *id) {
+	TypeSizeG n, m;
+	char *ident;
+	if(id)
+		ident = id;
+	else
+		ident = "X";
+	fprintf(f, "# Created by Molti\n# name: %s\n# type: matrix\n# rows: %d\n# columns: %d\n", ident, g->sizeGraph, g->sizeGraph);
+	for(n=0; n<g->sizeGraph; n++) {
+		for(m=0; m<g->sizeGraph; m++) 
+			fprintf(f, " %d", (int) g->edge[i][n][m]);
+		fprintf(f, "\n");
+	}
+}
+
+
 /*print ith graph in standard format*/	
 void fprintMultiGraphTable(FILE *f, int t, TypeMultiGraph *g) {
 	TypeSizeG n, m;

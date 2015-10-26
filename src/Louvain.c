@@ -392,6 +392,197 @@ void transfertStandard(int e, int j, TypeCommunityState *state, void *param) {
 
 
 /****************************************************************************/
+/* Generic functions */
+/****************************************************************************/
+
+double variationGeneric(int e, int j, TypeCommunityState *state, void *param) {
+	int f, t;
+	double var = 0.;
+	if(state->element[e].atom == j)
+		return 0.;
+	for(t=0; t<state->graph->sizeTable; t++) {
+		for(f=state->community[state->element[e].atom].first; f>=0; f=state->element[f].next)
+			if(f != e) {
+				var -= ((TypeGenericParamMulti*)param)->table[t].score[e][f];
+			}
+	}
+	for(t=0; t<state->graph->sizeTable; t++) {
+		for(f=state->community[j].first; f>=0; f=state->element[f].next) {
+			var += ((TypeGenericParamMulti*)param)->table[t].score[e][f];
+		}
+	}
+	return var;
+}
+
+TypeCommunityState *getUpdatedCommunityStateParamGeneric(TypeCommunityState *state, void **param) {
+	TypeCommunityState *new;
+	TypeGenericParamMulti *oldParam, *newParam;
+	int p, *index, ind = 0, i, j, *prec, nedge, iedge, t;
+	index = (int*) malloc(state->sizeElement*sizeof(int));
+	for(p=state->first; p>=0; p=state->community[p].next)
+		index[p] = ind++;
+	new = (TypeCommunityState*) malloc(sizeof(TypeCommunityState));
+	new->graph = getUpdatedGraph(state, index);
+	new->gsave = state->gsave;
+	new->sizeElement = state->sizeProto;
+	new->sizeProto = new->sizeElement;
+	new->element = (TypeElementClass*) malloc(new->sizeElement*sizeof(TypeElementClass));
+	new->community = (TypeProtoClass*) malloc(new->sizeElement*sizeof(TypeProtoClass));
+	new->sizeInit = state->sizeInit;
+	new->elementInit = (int*) malloc(new->sizeInit*sizeof(int));
+	for(i=0; i<new->sizeInit; i++)
+		new->elementInit[i] = index[state->element[state->elementInit[i]].atom];
+	new->first = 0;
+	new->trash = -1;
+	prec = &(new->first);
+	nedge = countEdge(new->graph);
+	new->edgeList = (TypeElementEdge*) malloc(2*nedge*sizeof(TypeElementEdge));
+	iedge = 0;
+	for(p=state->first; p>=0; p=state->community[p].next) {
+		new->community[index[p]].size = state->community[p].size;
+		new->community[index[p]].first = index[p];
+		new->community[index[p]].prec = prec;
+		if(state->community[p].next >=0)
+			new->community[index[p]].next = index[state->community[p].next];
+		else
+			new->community[index[p]].next = -1;
+		prec = &(new->community[index[p]].next); 
+		new->element[index[p]].size = state->community[p].size;
+		new->element[index[p]].atom = index[p];
+		new->element[index[p]].prec = &(new->community[index[p]].first);
+		new->element[index[p]].next = -1;
+		new->element[index[p]].first = -1;
+		for(j=0; j<index[p]; j++) {
+			int t;
+			for(t=0; t<new->graph->sizeTable && new->graph->edge[t][index[p]][j] == 0; t++);
+			if(t < new->graph->sizeTable) {
+				new->edgeList[iedge].neighbour = j;
+				new->edgeList[iedge].next = new->element[index[p]].first;
+				new->element[index[p]].first = iedge;
+				iedge++;
+			}
+		}
+		for(j=index[p]+1; j<new->sizeElement; j++) {
+			int t;
+			for(t=0; t<new->graph->sizeTable && new->graph->edge[t][index[p]][j] == 0; t++);
+			if(t < new->graph->sizeTable) {
+				new->edgeList[iedge].neighbour = j;
+				new->edgeList[iedge].next = new->element[index[p]].first;
+				new->element[index[p]].first = iedge;
+				iedge++;
+			}
+		}
+	}
+	oldParam = (TypeGenericParamMulti*) (*param);
+	newParam = (TypeGenericParamMulti*) malloc(sizeof(TypeGenericParamMulti));
+	newParam->size = state->graph->sizeTable;
+	newParam->sizeBuf = state->graph->sizeTable;
+	newParam->sizeGraph = new->graph->sizeGraph;
+	newParam->table = (TypeGenericParam*) malloc(newParam->size*sizeof(TypeGenericParam));
+	for(t=0; t<state->graph->sizeTable; t++) {
+		int e;
+		newParam->table[t].score= (double**) malloc(new->graph->sizeGraph*sizeof(double*));
+		for(e=0; e<new->graph->sizeGraph; e++) {
+			int f;
+			newParam->table[t].score[e] = (double*) malloc(new->graph->sizeGraph*sizeof(double));
+			for(f=0; f<new->graph->sizeGraph; f++) {
+				newParam->table[t].score[e][f] = 0.;
+			}
+		}
+		for(p=state->first; p>=0; p=state->community[p].next) {
+			int q;
+			for(q=state->first; q>=0; q=state->community[q].next) {
+				int e, f;
+				newParam->table[t].score[index[p]][index[q]] = 0;
+				for(e=state->community[p].first; e>=0; e=state->element[e].next)
+					for(f=state->community[q].first; f>=0; f=state->element[f].next) {
+						newParam->table[t].score[index[p]][index[q]] += oldParam->table[t].score[e][f];
+					}
+			}
+		}
+	}
+	freeParamGeneric(*param);
+	*param = newParam;
+	free((void*) index);
+	return new;
+}
+
+
+void freeParamGeneric(void *param) {
+	int t;
+	if(param != NULL) {
+		for(t=0; t<((TypeGenericParamMulti*)param)->sizeBuf; t++) {
+			int e;
+			if(((TypeGenericParamMulti*)param)->table[t].score != NULL) {
+				for(e=0; e<((TypeGenericParamMulti*)param)->sizeGraph; e++) {
+					if(((TypeGenericParamMulti*)param)->table[t].score[e] != NULL)
+						free((void*)((TypeGenericParamMulti*)param)->table[t].score[e]);
+				}
+				free((void*)((TypeGenericParamMulti*)param)->table[t].score);
+			}
+		}
+		if(((TypeGenericParamMulti*)param)->table != NULL)
+			free((void*)((TypeGenericParamMulti*)param)->table);
+		free((void*)param);
+	}
+}
+
+void updateGeneric(TypeCommunityState **state, void **param) {
+	TypeCommunityState *stateTmp = *state;
+	*state = getUpdatedCommunityStateParamGeneric(*state, param);
+	freeCommunityState(stateTmp);
+}
+
+
+
+/*NewmanBis functions*/
+
+void *getParamNewman(TypeCommunityState *state, void *info) {
+	int t;
+	TypeGenericParamMulti *param;
+	double pI, pE, *tmp, m;
+	tmp = (double*) malloc(state->graph->sizeGraph*sizeof(double));
+	param = (TypeGenericParamMulti*) malloc(sizeof(TypeGenericParamMulti));
+	param->size = state->graph->sizeTable;
+	param->sizeGraph = state->graph->sizeGraph;
+	param->sizeBuf = state->graph->sizeTable;
+	param->table = (TypeGenericParam*) malloc(param->size*sizeof(TypeGenericParam));
+	for(t=0; t<state->graph->sizeTable; t++) {
+		int i,j ,k;
+		m = 0.;
+		for(i=0; i<state->graph->sizeGraph; i++) {
+			tmp[i] = 0.;
+			for(j=0; j<state->graph->sizeGraph; j++)
+				tmp[i] += (double) state->graph->edge[t][i][j];
+			m += tmp[i];
+		}
+		m /= 2.;
+		param->table[t].score= (double**) malloc(state->graph->sizeGraph*sizeof(double*));
+		for(i=0; i<state->graph->sizeGraph; i++) {
+			param->table[t].score[i] = (double*) malloc(state->graph->sizeGraph*sizeof(double));
+			param->table[t].score[i][i] = 0.;
+			for(j=0; j<i; j++) {
+				param->table[t].score[i][j] = (((double)state->graph->edge[t][i][j])-(tmp[i]*tmp[j])/(2.*m))/(2.*m);
+				param->table[t].score[j][i] = param->table[t].score[i][j];
+			}
+		}
+	}
+	free((void*)tmp);
+	return (void*) param;
+}
+
+void initNewman(TypeMultiGraph *graph, void *info, TypeCommunityState **stateP, void **paramP) {
+	if(graph->sizeGraph > 0) {
+		*stateP = initCommunityState(graph);
+		*paramP = getParamNewman(*stateP, info);
+	} else {
+		*stateP = NULL;
+		*paramP = NULL;
+	}
+}
+
+
+/****************************************************************************/
 /* Louvain functions */
 /****************************************************************************/
 double variationLouvain(int e, int j, TypeCommunityState *state, void *param) {
@@ -560,6 +751,13 @@ TypePartition getPartition(TypeMultiGraph *graph, TypePartitionMethod type, void
 	int cont;
 	global = (TypeLouvainGlobal*) malloc(sizeof(TypeLouvainGlobal));
 	switch(type) {
+		case NewmanType:
+			global->variation = variationGeneric;
+			global->init = initNewman;
+			global->update = updateGeneric;
+			global->transfert = transfertStandard;
+			global->freeParam = freeParamGeneric;
+			break;
 		case LouvainType:
 		default:
 			global->variation = variationLouvain;

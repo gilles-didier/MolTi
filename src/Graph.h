@@ -90,6 +90,8 @@ TypeMultiGraph *sumMultiGraphMulti(TypeMultiGraph *multi);
 TypeMultiGraph *interMultiGraphMulti(TypeMultiGraph *multi);
 TypeMultiGraph *unionMultiGraphMulti(TypeMultiGraph *multi);
 
+/*print ith graph in Octave matrix format*/	
+void fprintMultiGraphOctaveMatrix(FILE *f, int i, TypeMultiGraph *g, char *id);
 void fprintGraphInci(FILE *f, TypeGraph *g);
 void fprintMultiGraphTable(FILE *f, int t, TypeMultiGraph *g);
 int countEdge(TypeMultiGraph *g);

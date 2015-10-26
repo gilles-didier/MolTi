@@ -43,8 +43,8 @@ int issepX(char c) {
 
 
 TypeAnnotation *readAnnotation(FILE *f) {
-	char c, tmpS[MAX_NAME_SIZE+1], tmpE[MAX_NAME_SIZE+1];
-	int sizeBufferG, sizeBufferL, indexG, indexA, indexL, n, m, i, j;
+    char c, tmpS[MAX_NAME_SIZE+1];
+    int sizeBufferG, sizeBufferL, indexG, indexA, indexL, i;
 	TypeAnnotation *an;
 	TypeAnnotationList *list;
 	int *start;
@@ -63,7 +63,7 @@ TypeAnnotation *readAnnotation(FILE *f) {
 		start[i] = -1;
 	for(c=getc(f); c!=EOF && issepline(c); c = fgetc(f));
 	while(c != EOF) { //read first line
-		int i, indexG, indexE;
+        int i, indexG;
 		if(c == '\'' || c == '"') {
 			c = fgetc(f);
 			for(i=0; i<MAX_NAME_SIZE && c != EOF && c != '\'' && c != '"'; i++) {
@@ -119,7 +119,6 @@ TypeAnnotation *readAnnotation(FILE *f) {
 			if(!((i != 2) && (tmpS[0] == 'N') && (tmpS[1] == 'A'))) {
 				indexA = addWordLexiTree(tmpS, dictA);
 				if(indexL >= sizeBufferL) {
-					int i;
 					sizeBufferL += BASIC_INC_BUFFER_L;
 					list = (TypeAnnotationList*) realloc((void *) list, sizeBufferL*sizeof(double*));
 				}
@@ -202,7 +201,6 @@ void freeAnnotation(TypeAnnotation *an) {
 TypeOntologyInfo *readOntologyInfo(FILE *f) {
 	char c, first[MAX_NAME_SIZE+1], last[MAX_NAME_SIZE+1], id[MAX_NAME_SIZE+1], name[MAX_NAME_SIZE+1];
 	int sizeBuffer, indexG, indexA, indexL, n, m, i, j;
-	TypeAnnotation *an;
 	TypeOntologyInfo *info;
 
 	info = (TypeOntologyInfo*) malloc(sizeof(TypeOntologyInfo));

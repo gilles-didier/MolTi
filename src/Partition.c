@@ -436,6 +436,84 @@ void freePartitionList(TypePartitionList *pl) {
 #define INC_SIZE_ITEM_BUF 200
 #define MAX_NAME_SIZE 200
 
+/*read partition in Line Number format*/
+TypePartition readPartitionNumber(FILE *f) {
+    char c;
+    TypePartition part;
+    int sizeBufItem = INC_SIZE_ITEM_BUF, index;
+    TypeLexiTree *dict;
+    dict = newLexiTree();
+
+    part.sizeAtom = 0;
+    part.sizeItem = 0;
+    part.atom = (int*) malloc(sizeBufItem*sizeof(int));
+    for(c = fgetc(f); c != EOF && issepline(c); c = fgetc(f));
+    while(c != EOF) {
+        char tmp[MAX_NAME_SIZE+1];
+        int i;
+        while(c != EOF && !isline(c)) {
+            if(c == '\'' || c == '"') {
+                c = fgetc(f);
+                for(i=0; i<MAX_NAME_SIZE && c != EOF && c != '\'' && c != '"'; i++) {
+                    tmp[i] = c;
+                    c = fgetc(f);
+                }
+                if(c == '\'' || c == '"')
+                    c = fgetc(f);
+                else
+                    exitProg(ErrorReading, "Missing closing \" or '...");
+            } else {
+                for(i=0; i<MAX_NAME_SIZE && c !=EOF && !issep(c); i++) {
+                    tmp[i] = c;
+                    c = fgetc(f);
+                }
+            }
+            if(i == MAX_NAME_SIZE)
+                exitProg(ErrorExec, "Name too much long...");
+            if(i>0) {
+                tmp[i++] = '\0';
+                index = atoi(tmp);
+				if(index>part.sizeItem)
+                    part.sizeItem = index;
+                if(index>=sizeBufItem) {
+                    sizeBufItem += INC_SIZE_ITEM_BUF;
+                    part.atom = (int*) realloc((void*)part.atom, sizeBufItem*sizeof(int));
+                }
+				for(; c != EOF && issep(c); c = fgetc(f));
+				if(c == '\'' || c == '"') {
+					c = fgetc(f);
+					for(i=0; i<MAX_NAME_SIZE && c != EOF && c != '\'' && c != '"'; i++) {
+						tmp[i] = c;
+						c = fgetc(f);
+					}
+					if(c == '\'' || c == '"')
+						c = fgetc(f);
+					else
+						exitProg(ErrorReading, "Missing closing \" or '...");
+				} else {
+					for(i=0; i<MAX_NAME_SIZE && c !=EOF && !issepline(c); i++) {
+						tmp[i] = c;
+						c = fgetc(f);
+					}
+				}
+				if(i == MAX_NAME_SIZE)
+					exitProg(ErrorExec, "Name too much long...");
+				if(i>0) {
+					tmp[i++] = '\0';
+					part.atom[index] = atoi(tmp);
+					if(part.atom[index]>=part.sizeAtom)
+						part.sizeAtom = part.atom[index]+1;
+				}
+            }
+            for(; c != EOF && issep(c); c = fgetc(f));
+        }
+        for(; c != EOF && issepline(c); c = fgetc(f));
+    }
+    part.sizeItem++;
+    part.atom = (int*) realloc((void*)part.atom, part.sizeItem*sizeof(int));
+    return part;
+}
+
 
 /*read partition in Line format*/
 TypePartition readPartitionLine(FILE *f, char***name) {

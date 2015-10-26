@@ -33,7 +33,8 @@ extern "C" {
 #endif
 
 typedef enum TYPE_PARTITION_METHOD {
-    LouvainType=0
+    LouvainType=0,
+	NewmanType
 } TypePartitionMethod;
 
 typedef struct LOUVAIN_PARAM {
@@ -82,6 +83,22 @@ typedef struct LOUVAIN_GLOBAL {
     void (*init)(TypeMultiGraph*, void*, TypeCommunityState**, void**), (*update)(TypeCommunityState**, void**), (*transfert)(int, int, TypeCommunityState*, void*), (*freeParam)(void*);
 } TypeLouvainGlobal;
 
+
+typedef struct GENERIC_PARAM {
+	double  **score;
+} TypeGenericParam;
+
+typedef struct GENERIC_PARAM_MULTI {
+	int size, sizeBuf, sizeGraph;
+	TypeGenericParam *table;
+} TypeGenericParamMulti;
+
+typedef struct GENERIC_SINGLE_PARAM_MULTI {
+	int size, sizeBuf, sizeGraph;
+	double  **score;
+} TypeGenericSingleParamMulti;
+
+
 /****************************************************************************/
 /* General functions on state*/
 /****************************************************************************/
@@ -98,6 +115,24 @@ int countCommunity(TypeCommunityState *state);
 int isSingle(int e, TypeCommunityState *state);
 /*transfer element e from protoatom i to protoatom j  !! e must be in protoatom i !!*/
 void transfertStandard(int e, int j, TypeCommunityState *state, void *param);
+
+
+/****************************************************************************/
+/* Generic functions */
+/****************************************************************************/
+
+double variationGeneric(int e, int j, TypeCommunityState *state, void *param);
+TypeCommunityState *getUpdatedCommunityStateParamGeneric(TypeCommunityState *state, void **param);
+void updateParamGeneric(TypeCommunityState *state, TypeGenericParamMulti *param);
+void freeParamGeneric(void *param);
+void updateGeneric(TypeCommunityState **state, void **param);
+
+/****************************************************************************/
+/* Newman functions */
+/****************************************************************************/
+
+void *getParamNewman(TypeCommunityState *state, void *info);
+void initNewman(TypeMultiGraph *graph, void *info, TypeCommunityState **stateP, void **paramP);
 
 /****************************************************************************/
 /* Louvain functions */

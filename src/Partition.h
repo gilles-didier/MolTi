@@ -70,7 +70,8 @@ double getPartitionDensity(TypePartition *part);
 TypePartition readPartitionLine(FILE *f, char***name);
 void keepIntersection(TypePartition *part1, char **name1, TypePartition *part2, char **name2, char ***name);
 void freePartition(TypePartition *part);
-
+/*read partition in Line Number format*/
+TypePartition readPartitionNumber(FILE *f);
 #ifdef __cplusplus
 }
 #endif

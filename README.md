@@ -1,7 +1,7 @@
 # MolTi
 Community detection in multiplex networks
 
-Directory "bin" contains GUI executables for Linux 64bits (needs Qt and GSL libraries) and a standalone osX application. A Windows version will follow soon.
+Directory "bin" contains GUI executables for Linux 64bits (needs Qt and GSL libraries), a standalone osX application and a Windows application. To run the Windows application, unzip the directory and click on "Molti.exe".
 
 Directory "datasets" contains the Markdown file and the networks used for the article (be careful to download by clicking the button "raw").
 

@@ -46,8 +46,9 @@ MolTiWindow::MolTiWindow(QWidget *parent) :
     ui->treeView_communities->setItemDelegateForColumn(0, new QItemClassDelegate());
     ui->treeView_communities->setItemDelegateForColumn(1, new QItemIntDelegate());
     ui->treeView_communities->setItemDelegateForColumn(2, new QItemDoubleDelegate());
-     helpDialog = NULL;
-     multi = NULL;
+    helpDialog = new QHelpDialog(this);
+    helpDialog->setContent(*new QUrl("qrc:/HelpMolTi.html"));
+    multi = NULL;
     annot = NULL;
     sap = NULL;
     sig = NULL;
@@ -211,16 +212,6 @@ bool MolTiWindow::savePartition()
 
 void MolTiWindow::help()
 {
-   if(helpDialog == NULL) {
-        helpDialog = new QHelpDialog(this);
-        QFile file(":/HelpMolTi.html");
-        if(file.open(QIODevice::ReadOnly)) {
-            helpDialog->setContent(QTextStream(&file).readAll());
-            file.close();
-        } else {
-            helpDialog->setContent(QString(HELP_PAGE));
-        }
-    }
     helpDialog->show();
 }
 

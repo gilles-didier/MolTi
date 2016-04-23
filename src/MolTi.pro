@@ -7,7 +7,7 @@
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-QT       += webkitwidgets
+
 
 TARGET = MolTi
 TEMPLATE = app
